@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolTable", "CobolTable.csproj", "{AF869D57-43D9-4EEA-BACD-B3590F5BD571}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobolTable.Tests", "..\CobolTable.Tests\CobolTable.Tests.csproj", "{C8F18B75-1588-4FAA-8956-B29C43393604}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF869D57-43D9-4EEA-BACD-B3590F5BD571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF869D57-43D9-4EEA-BACD-B3590F5BD571}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF869D57-43D9-4EEA-BACD-B3590F5BD571}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF869D57-43D9-4EEA-BACD-B3590F5BD571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F18B75-1588-4FAA-8956-B29C43393604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F18B75-1588-4FAA-8956-B29C43393604}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F18B75-1588-4FAA-8956-B29C43393604}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F18B75-1588-4FAA-8956-B29C43393604}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8634C3E-EF32-4750-8696-413D0293FE01}
+	EndGlobalSection
+EndGlobal

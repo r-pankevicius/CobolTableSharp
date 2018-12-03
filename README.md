@@ -1,2 +1,2 @@
 # CobolTableSharp
-DataTable wrapper exposing strongly typed rows collection.
+.NET DataTable wrapper exposing it as strongly typed rows collection.
