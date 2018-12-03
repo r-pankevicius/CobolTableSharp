@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Data;
+using System.Linq;
 
 namespace spartan.COBOL
 {
@@ -29,7 +30,8 @@ namespace spartan.COBOL
 
 			foreach (Column col in TableStructure<TRow>.Columns)
 			{
-				table.Columns.Add(new DataColumn(col.Name, col.Type));
+				Type t = UnwrapNullableType(col.Type);
+				table.Columns.Add(new DataColumn(col.Name, t));
 			}
 		}
 
@@ -44,10 +46,7 @@ namespace spartan.COBOL
 		public CobolTable(DataTable dataTable)
 			: base()
 		{
-			if (dataTable == null)
-				throw new ArgumentNullException("dataTable");
-
-			this.table = dataTable;
+			this.table = dataTable ?? throw new ArgumentNullException(nameof(dataTable));
 		}
 
 		/// <summary>
@@ -71,6 +70,32 @@ namespace spartan.COBOL
 			DataRow tableRow = table.NewRow();
 			CopyToDataRow(tableRow, newRow);
 			table.Rows.Add(tableRow);
+		}
+
+		public void AddRows(IEnumerable<TRow> newRows)
+		{
+			foreach (var row in newRows)
+			{
+				AddRow(row);
+			}
+		}
+
+		public IEnumerable<TRow> GetAllRows()
+		{
+			foreach (TRow row in Rows)
+			{
+				yield return row;
+			}
+		}
+
+		/// <summary>
+		/// Converts a raw data table row to typed object.
+		/// </summary>
+		public TRow ConvertRow(DataRow row)
+		{
+			TRow typedRow = new TRow();
+			CopyFromDataRow(typedRow, row);
+			return typedRow;
 		}
 
 		#region Implementation
@@ -100,6 +125,19 @@ namespace spartan.COBOL
 		{
 			foreach (Column col in TableStructure<TRow>.Columns)
 				col.CopyToDataRow(dest, src);
+		}
+
+		/// <summary>
+		/// Unwraps underlying type T from INullable or returns original type.
+		/// </summary>
+		private static Type UnwrapNullableType(Type type)
+		{
+			if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+			{
+				return type.GenericTypeArguments[0];
+			}
+
+			return type;
 		}
 
 		#endregion
@@ -310,5 +348,63 @@ namespace spartan.COBOL
 		}
 
 		#endregion class Column
+	}
+
+	/// <summary>
+	/// Helper methods for CobolTable.
+	/// </summary>
+	public static class CobolTable
+	{
+		/// <summary>
+		/// Creates and fills typed data table from <paramref name="rows"/> collection.
+		/// </summary>
+		/// <param name="rows">Rows to fill data table with.</param>
+		/// <param name="primaryKey">Optional primary key column name.</param>
+		/// <returns>Filled typed data table (Use DataTable property to unwrap it).</returns>
+		public static CobolTable<TRow> Create<TRow>(
+			IEnumerable<TRow> rows, string primaryKey = null) where TRow : new()
+		{
+			var table = new CobolTable<TRow>();
+
+			if (!String.IsNullOrEmpty(primaryKey))
+			{
+				DataColumn pkColumn = table.DataTable.Columns[primaryKey];
+				table.DataTable.PrimaryKey = new DataColumn[] { pkColumn };
+			}
+
+			foreach (TRow row in rows)
+			{
+				table.AddRow(row);
+			}
+
+			return table;
+		}
+
+		/// <summary>
+		/// Returns column names in typed table.
+		/// </summary>
+		/// <typeparam name="TRow">Select-results type</typeparam>
+		/// <param name="typedTable">Typed table</param>
+		/// <returns>Column names</returns>
+		public static string[] GetColumnNames<TRow>(this CobolTable<TRow> typedTable)
+			where TRow : new()
+		{
+			string[] fieldNames = typedTable.DataTable.
+				Columns.OfType<DataColumn>().Select(c => c.ColumnName).ToArray();
+
+			return fieldNames;
+		}
+
+		/// <summary>
+		/// Returns select-result field names for type <typeparamref name="TRow"/>.
+		/// </summary>
+		/// <typeparam name="TRow">Select-results type</typeparam>
+		/// <returns>Field names</returns>
+		public static string[] GetFieldNames<TRow>()
+			where TRow : new()
+		{
+			var typedTable = new CobolTable<TRow>();
+			return typedTable.GetColumnNames();
+		}
 	}
 }
