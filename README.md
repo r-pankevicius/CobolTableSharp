@@ -43,6 +43,6 @@ ct.AddRows(
 		new Person { ID = 1, Name = "Mike", Surname = "Lee"},
 		new Person { ID = 2, Name = "David", Surname = "Rabinovich"},
 		new Person { ID = 3, Name = "Chuck", Surname = "Norris"},
-	);
+	});
 ```
 You also will get a compiler error trying to write `ID = "qwerty"` rather than runtime error at `row["ID"] = "qwerty"`;
