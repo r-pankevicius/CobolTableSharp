@@ -1,6 +1,7 @@
 # CobolTableSharp
-.NET DataTable wrapper exposing it as strongly typed rows collection.
+.NET [[DataTable](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable?view=netcore-3.1)] wrapper exposing it as strongly typed rows collection.
 
+## Boring initialization simplified
 Instead of writing:
 ```csharp
 var dt = new DataTable();
@@ -13,6 +14,18 @@ row["ID"] = 1;
 row["Name"] = "Mike";
 row["Surname"] = "Lee";
 dt.Rows.Add(row);
+
+row = dt.NewRow();
+row["ID"] = 2;
+row["Name"] = "David";
+row["Surname"] = "Rabinovich";
+dt.Rows.Add(row);
+
+row = dt.NewRow();
+row["ID"] = 3;
+row["Name"] = "Chuck";
+row["Surname"] = "Norris";
+dt.Rows.Add(row);
 ```
 you write:
 ```csharp
@@ -22,12 +35,14 @@ class Person
 	public string Name { get; set; }
 	public string Surname { get; set; }
 }
-// ...
+
 var ct = new CobolTable<Person>();
-ct.AddRow(new Person
-{
-	ID = 1,
-	Name = "Mike",
-	Surname = "Lee"
-});
+ct.AddRows(
+	new Person [] 
+	{
+		new Person { ID = 1, Name = "Mike", Surname = "Lee"},
+		new Person { ID = 2, Name = "David", Surname = "Rabinovich"},
+		new Person { ID = 3, Name = "Chuck", Surname = "Norris"},
+	);
 ```
+You also will get a compiler error trying to write `ID = "qwerty"` rather than runtime error at `row["ID"] = "qwerty"`;
