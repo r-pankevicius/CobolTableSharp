@@ -1,6 +1,8 @@
 # CobolTableSharp
 .NET [[DataTable](https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable?view=netcore-3.1)] wrapper exposing it as strongly typed rows collection.
 
+Original source is [[here](https://gist.github.com/spartanthe/5154626)]. I did not invent it, I just adopted it.
+
 ## Boring initialization simplified
 Instead of writing:
 ```csharp
