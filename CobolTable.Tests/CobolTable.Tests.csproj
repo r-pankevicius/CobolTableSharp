@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CobolTableSharp\CobolTable.csproj" />
+    <ProjectReference Include="..\CobolTable\CobolTable.csproj" />
   </ItemGroup>
 
 </Project>
