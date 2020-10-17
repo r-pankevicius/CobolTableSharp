@@ -6,28 +6,28 @@ Original source is [[here](https://gist.github.com/spartanthe/5154626)]. I did n
 ## Boring initialization simplified
 Instead of writing:
 ```csharp
-var dt = new DataTable();
-dt.Columns.Add("ID", typeof(int));
-dt.Columns.Add("Name", typeof(string));
-dt.Columns.Add("Surname", typeof(string));
+var dataTable = new DataTable();
+dataTable.Columns.Add("ID", typeof(int));
+dataTable.Columns.Add("Name", typeof(string));
+dataTable.Columns.Add("Surname", typeof(string));
 
-var row = dt.NewRow();
+var row = dataTable.NewRow();
 row["ID"] = 1;
 row["Name"] = "Mike";
 row["Surname"] = "Lee";
-dt.Rows.Add(row);
+dataTable.Rows.Add(row);
 
-row = dt.NewRow();
+row = dataTable.NewRow();
 row["ID"] = 2;
 row["Name"] = "David";
 row["Surname"] = "Rabinovich";
-dt.Rows.Add(row);
+dataTable.Rows.Add(row);
 
-row = dt.NewRow();
+row = dataTable.NewRow();
 row["ID"] = 3;
 row["Name"] = "Chuck";
 row["Surname"] = "Norris";
-dt.Rows.Add(row);
+dataTable.Rows.Add(row);
 ```
 you write:
 ```csharp
@@ -38,13 +38,19 @@ class Person
 	public string Surname { get; set; }
 }
 
-var ct = new CobolTable<Person>();
-ct.AddRows(
+var cobolTable = new CobolTable<Person>(
 	new Person [] 
 	{
 		new Person { ID = 1, Name = "Mike", Surname = "Lee"},
 		new Person { ID = 2, Name = "David", Surname = "Rabinovich"},
 		new Person { ID = 3, Name = "Chuck", Surname = "Norris"},
 	});
+
+// And your DataTable is here:
+var dt = cobolTable.DataTable;
 ```
 You also will get a compiler error trying to write `ID = "qwerty"` rather than runtime error at `row["ID"] = "qwerty"`;
+
+## TBD: other goodies
+
+Take a look at [[tests](CobolTable.Tests/CobolTableTests.cs)] to understand how it can be used.
