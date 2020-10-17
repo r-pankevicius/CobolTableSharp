@@ -44,9 +44,16 @@ namespace spartan.COBOL
 		/// Ideally TRow property names are same as data table's column names.
 		/// </remarks>
 		public CobolTable(DataTable dataTable)
-			: base()
 		{
-			this.table = dataTable ?? throw new ArgumentNullException(nameof(dataTable));
+			table = dataTable ?? throw new ArgumentNullException(nameof(dataTable));
+		}
+
+		/// <summary>
+		/// Constructs a typed table and fills ot with <paramref name="rows"/>.
+		/// </summary>
+		public CobolTable(IEnumerable<TRow> rows) : this()
+		{
+			AddRows(rows);
 		}
 
 		/// <summary>
@@ -55,15 +62,9 @@ namespace spartan.COBOL
 		/// <remarks>
 		/// Use to pass it to older method accepting dynamic data table in middle of refactoring.
 		/// </remarks>
-		public DataTable DataTable
-		{
-			get { return this.table; }
-		}
+		public DataTable DataTable => table;
 
-		public TypedRowCollection Rows
-		{
-			get { return new TypedRowCollection(table.Rows); }
-		}
+		public TypedRowCollection Rows => new TypedRowCollection(table.Rows);
 
 		public void AddRow(TRow newRow)
 		{
@@ -74,6 +75,9 @@ namespace spartan.COBOL
 
 		public void AddRows(IEnumerable<TRow> newRows)
 		{
+			if (newRows is null)
+				throw new ArgumentNullException(nameof(newRows));
+
 			foreach (var row in newRows)
 			{
 				AddRow(row);
@@ -93,7 +97,7 @@ namespace spartan.COBOL
 		/// </summary>
 		public TRow ConvertRow(DataRow row)
 		{
-			TRow typedRow = new TRow();
+			var typedRow = new TRow();
 			CopyFromDataRow(typedRow, row);
 			return typedRow;
 		}
@@ -102,7 +106,7 @@ namespace spartan.COBOL
 
 		private static TRow Extract(DataRow tableRow)
 		{
-			TRow row = new TRow();
+			var row = new TRow();
 			CopyFromDataRow(row, tableRow);
 			return row;
 		}
@@ -156,22 +160,19 @@ namespace spartan.COBOL
 				this.rows = rows;
 			}
 
-			public int Count { get { return this.rows.Count; } }
+			public int Count => this.rows.Count;
 
 			public TRow this[int index]
 			{
 				get
 				{
-					DataRow row = this.rows[index];
+					DataRow row = rows[index];
 					TRow typedRow = Extract(row);
 					return typedRow;
 				}
 			}
 
-			public Enumerator GetEnumerator()
-			{
-				return new Enumerator(rows.GetEnumerator());
-			}
+			public Enumerator GetEnumerator() => new Enumerator(rows.GetEnumerator());
 
 			/// <summary>
 			/// Enumerator (foreach support)
@@ -185,18 +186,9 @@ namespace spartan.COBOL
 					this.rowsEnumerator = rowsEnumerator;
 				}
 
-				public TRow Current
-				{
-					get
-					{
-						return Extract((DataRow)rowsEnumerator.Current);
-					}
-				}
+				public TRow Current => Extract((DataRow)rowsEnumerator.Current);
 
-				public bool MoveNext()
-				{
-					return rowsEnumerator.MoveNext();
-				}
+				public bool MoveNext() => rowsEnumerator.MoveNext();
 			}
 		}
 
@@ -291,10 +283,7 @@ namespace spartan.COBOL
 			/// are needed for typed table.
 			/// </summary>
 			/// <returns>Data columns needed for typed table.</returns>
-			internal static List<Column> GetRowColumns()
-			{
-				return Parse(typeof(TRow));
-			}
+			internal static List<Column> GetRowColumns() => Parse(typeof(TRow));
 
 			#region Implementation
 
@@ -330,7 +319,7 @@ namespace spartan.COBOL
 				{
 					if (pi.CanRead && pi.CanWrite)
 					{
-						Column col = new Column();
+						var col = new Column();
 
 						col.Name = pi.Name;
 						col.attributeGetter = pi.GetGetMethod();

@@ -8,6 +8,19 @@ namespace spartan.COBOL
 	public class CobolTableTests
 	{
 		[Fact]
+		public void CobolTable_Ctor_WithIEnumerableParamWorks()
+		{
+			var table = new CobolTable<MyRow>(
+				new MyRow[]
+				{
+					new MyRow() { A = 10, B = 2 },
+					new MyRow() { A = 1000, B = 1000 }
+				});
+
+			table.Rows.Count.ShouldBe(2, "Incorrect table.Rows.Count");
+		}
+
+		[Fact]
 		public void CobolTable_AddRow_AddsCorrectNumberOfRows()
 		{
 			var table = new CobolTable<MyRow>();
@@ -43,7 +56,7 @@ namespace spartan.COBOL
 		[Fact]
 		public void CobolTable_WrapsExistingTable_WithSameColumnNamesAsPropertyNames()
 		{
-			var dataTable = new System.Data.DataTable();
+			var dataTable = new DataTable();
 
 			dataTable.Columns.Add("A", typeof(int));
 			dataTable.Columns.Add("B", typeof(int));
