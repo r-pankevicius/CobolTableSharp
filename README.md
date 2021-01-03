@@ -51,6 +51,10 @@ var dt = cobolTable.DataTable;
 ```
 You also will get a compiler error trying to write `ID = "qwerty"` rather than runtime error at `row["ID"] = "qwerty"`;
 
+## DataTable last, not first in reports
+
+Many report engines prefer DataTable as input. If you start from "DataTable first" design then after few years people will not understand what's going on here. Especially if you fetch some data from database, some data from services, append some data... CobolTable let's you focus on types, use Linq, and aggregate all stuff to your reports engine as a last step. Everything is typed before the last step.
+
 ## TBD: other goodies
 
 Take a look at [[tests](CobolTable.Tests/CobolTableTests.cs)] to understand how it can be used.
